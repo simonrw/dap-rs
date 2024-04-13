@@ -424,4 +424,27 @@ pub enum Event {
   ///
   /// Specification: [Thread event](https://microsoft.github.io/debug-adapter-protocol/specification#Events_Thread)
   Thread(ThreadEventBody),
+  #[cfg(feature = "client")]
+  /// Event for an unknown event type
+  #[serde(untagged)]
+  Unknown { event: String, body: Value },
+}
+
+#[cfg(test)]
+#[cfg(feature = "client")]
+mod tests {
+  use super::Event;
+
+  #[test]
+  fn unknown_event() {
+    let input = r#"{"event":"unknown","body":{}}"#;
+    let event: Event = serde_json::from_str(input).unwrap();
+    match event {
+      Event::Unknown { event, body } => {
+        assert_eq!(event, "unknown");
+        assert_eq!(body, serde_json::json!({}));
+      }
+      other => panic!("unexpected event: {:?}", other),
+    }
+  }
 }
