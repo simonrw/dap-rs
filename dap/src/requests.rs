@@ -992,6 +992,10 @@ pub enum Command {
   ///
   /// Specification: [CancelRequest](https://microsoft.github.io/debug-adapter-protocol/specification#Base_Protocol_Cancel)
   Cancel(CancelArguments),
+  #[cfg(feature = "client")]
+  /// Event for an unknown request type
+  #[serde(untagged)]
+  Unknown { command: String, arguments: Value },
 }
 
 /// Represents a request from a client.
@@ -1179,5 +1183,26 @@ impl Request {
       }),
       _ => Err(ServerError::ResponseConstructError),
     }
+  }
+}
+
+#[cfg(test)]
+#[cfg(feature = "client")]
+mod tests {
+  use super::Command;
+
+  #[test]
+  fn unknown_command() {
+    let command = Command::Unknown {
+      command: "foo".to_string(),
+      arguments: serde_json::json!({
+          "a": 10,
+      }),
+    };
+    let command_value = serde_json::to_value(command).unwrap();
+    let command_obj = command_value.as_object().unwrap();
+    assert_eq!(command_obj.get("command").unwrap().as_str().unwrap(), "foo");
+    let value = command_obj.get("arguments").unwrap().as_object().unwrap();
+    assert_eq!(value.get("a").unwrap().as_i64().unwrap(), 10);
   }
 }
