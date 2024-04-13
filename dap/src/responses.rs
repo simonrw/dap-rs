@@ -4,6 +4,7 @@ use serde::Serialize;
 
 #[cfg(feature = "client")]
 use serde::Deserialize;
+use serde_json::Value;
 
 use crate::types::{
   Breakpoint, BreakpointLocation, Capabilities, CompletionItem, DataBreakpointAccessType,
@@ -624,6 +625,11 @@ pub enum ResponseBody {
   ///
   /// Specification: [WriteMemory request](https://microsoft.github.io/debug-adapter-protocol/specification#Requests_WriteMemory)
   WriteMemory(WriteMemoryResponse),
+  #[cfg(feature = "client")]
+  #[cfg(not(feature = "integration_testing"))]
+  /// Event for an unknown request type
+  #[serde(untagged)]
+  Unknown { command: String, body: Value },
 }
 
 /// Represents response to the client.
@@ -707,5 +713,27 @@ mod test {
     let val = serde_json::to_value(a).unwrap();
     assert!(val.get("message").unwrap().is_string());
     assert!(val.get("message").unwrap().as_str().unwrap() == "notStopped");
+  }
+
+  #[cfg(feature = "client")]
+  #[cfg(not(feature = "integration_testing"))]
+  #[test]
+  fn unknown_response_body() {
+    let s = r#"{"command": "unknown", "body": {"a": 10}}"#;
+    let body: ResponseBody = serde_json::from_str(s).unwrap();
+    let ResponseBody::Unknown { command, body } = body else {
+      panic!("invalid type");
+    };
+    assert_eq!(command, "unknown");
+    assert_eq!(
+      body
+        .as_object()
+        .unwrap()
+        .get("a")
+        .unwrap()
+        .as_i64()
+        .unwrap(),
+      10
+    );
   }
 }
