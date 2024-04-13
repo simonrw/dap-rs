@@ -995,7 +995,7 @@ pub enum Command {
   #[cfg(feature = "client")]
   /// Event for an unknown request type
   #[serde(untagged)]
-  Unknown { command: String, arguments: Value },
+  Other { command: String, arguments: Value },
 }
 
 /// Represents a request from a client.
@@ -1193,7 +1193,7 @@ mod tests {
 
   #[test]
   fn unknown_command() {
-    let command = Command::Unknown {
+    let command = Command::Other {
       command: "foo".to_string(),
       arguments: serde_json::json!({
           "a": 10,

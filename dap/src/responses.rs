@@ -4,6 +4,8 @@ use serde::Serialize;
 
 #[cfg(feature = "client")]
 use serde::Deserialize;
+#[cfg(feature = "client")]
+#[cfg(not(feature = "integration_testing"))]
 use serde_json::Value;
 
 use crate::types::{
@@ -629,7 +631,7 @@ pub enum ResponseBody {
   #[cfg(not(feature = "integration_testing"))]
   /// Event for an unknown request type
   #[serde(untagged)]
-  Unknown { command: String, body: Value },
+  Other { command: String, body: Value },
 }
 
 /// Represents response to the client.
@@ -721,7 +723,7 @@ mod test {
   fn unknown_response_body() {
     let s = r#"{"command": "unknown", "body": {"a": 10}}"#;
     let body: ResponseBody = serde_json::from_str(s).unwrap();
-    let ResponseBody::Unknown { command, body } = body else {
+    let ResponseBody::Other { command, body } = body else {
       panic!("invalid type");
     };
     assert_eq!(command, "unknown");

@@ -34,6 +34,8 @@ fn main() -> DynResult<()> {
     // This is something that jsonschema should explicitly develop support for.
     "LoadedSources",
     "Scopes",
+    // custom types that are not included in the spec
+    "Other",
   ]
   .iter()
   .map(|s| s.to_string())
