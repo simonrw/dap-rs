@@ -2,8 +2,6 @@ use std::fmt::Debug;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use std::sync::{Arc, Mutex};
 
-use serde_json;
-
 use crate::{
   base_message::{BaseMessage, Sendable},
   errors::{DeserializationError, ServerError},

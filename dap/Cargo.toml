@@ -24,4 +24,3 @@ rand = { version = "0.*", optional = true }
 
 [features]
 integration_testing = ["fake", "rand"]
-client = []

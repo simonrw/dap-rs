@@ -1,14 +1,10 @@
 use std::collections::HashMap;
 
-use serde::Serialize;
-
-#[cfg(feature = "client")]
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::types::{RunInTerminalRequestArgumentsKind, StartDebuggingRequestKind};
 
-#[cfg_attr(feature = "client", derive(Deserialize))]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RunInTerminalRequestArguments {
   /// What kind of terminal to launch.
@@ -33,8 +29,7 @@ pub struct RunInTerminalRequestArguments {
   pub args_can_be_interpreted_by_shell: Option<bool>,
 }
 
-#[cfg_attr(feature = "client", derive(Deserialize))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct StartDebuggingRequestArguments {
   /// Arguments passed to the new debug session. The arguments must only contain
@@ -48,8 +43,7 @@ pub struct StartDebuggingRequestArguments {
   pub request: StartDebuggingRequestKind,
 }
 
-#[cfg_attr(feature = "client", derive(Deserialize))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "command", content = "arguments", rename_all = "camelCase")]
 pub enum ReverseCommand {
   /// This request is sent from the debug adapter to the client to run a command in a terminal.
@@ -90,8 +84,7 @@ pub enum ReverseCommand {
 /// beneficial to separate them because then we don't need to generate a huge
 /// amount of serialization code for all requests and supporting types (that the
 /// vast majority of would never be serialized by the adapter, only deserialized).
-#[cfg_attr(feature = "client", derive(Deserialize))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ReverseRequest {
   /// Sequence number for the Request.
