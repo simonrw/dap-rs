@@ -1338,10 +1338,9 @@ pub enum StartDebuggingRequestKind {
 /// A structured message object. Used to return errors from requests.
 ///
 /// Specification: [Message](https://microsoft.github.io/debug-adapter-protocol/specification#Types_Message)
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Deserialize, Serialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 #[cfg_attr(feature = "integration_testing", derive(Dummy))]
-#[cfg_attr(feature = "client", derive(Deserialize))]
 pub struct Message {
   /// Unique (within a debug adapter implementation) identifier for the message.
   /// The purpose of these error IDs is to help extension authors that have the

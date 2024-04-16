@@ -1,15 +1,13 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "client")]
-use serde::Deserialize;
-
-use crate::{events::Event, responses::Response, reverse_requests::ReverseRequest};
+use crate::{
+  events::Event, requests::Command, responses::Response, reverse_requests::ReverseRequest,
+};
 
 /// Represents the base protocol message, in which all other messages are wrapped.
 ///
 /// Specification: [Response](https://microsoft.github.io/debug-adapter-protocol/specification)
-#[cfg_attr(feature = "client", derive(Deserialize))]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BaseMessage {
   /// Sequence number of the message. The `seq` for
@@ -19,12 +17,12 @@ pub struct BaseMessage {
   pub message: Sendable,
 }
 
-#[cfg_attr(feature = "client", derive(Deserialize))]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum Sendable {
   Response(Response),
+  Request(Command),
   Event(Event),
   ReverseRequest(ReverseRequest),
 }
